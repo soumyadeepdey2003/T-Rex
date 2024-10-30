@@ -8,7 +8,6 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import trex.com.Web.Achievement.Model.AchievementModel;
 import trex.com.Web.Team.Model.TeamModel;
 import trex.com.Web.Team.Repository.TeamRepository;
 
