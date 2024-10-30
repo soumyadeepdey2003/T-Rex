@@ -5,9 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.antlr.v4.runtime.misc.NotNull;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -19,7 +20,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class AchievementModel {
 
-    public AchievementModel(Date date,String college,String event,String position){
+    public AchievementModel(LocalDate date,String college,String event,String position){
         this.date=date;
         this.college=college;
         this.event=event;
@@ -30,14 +31,14 @@ public class AchievementModel {
     private Long id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date date;
+    private LocalDate date;
 
-    @NotNull()
+    @NotNull(message = "Collage name is requare")
     private String college;
 
     private String event;
 
-    @NotNull()
+    @NotNull(message = "position is requare")
     private String position;
 
 

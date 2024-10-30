@@ -23,73 +23,74 @@ public class AchievementService {
     private AchievementRepository repository;
 
     @Cacheable(value = "achievements")
-    public List<AchievementModel> getAllAchievementsSortedByDate() throws Exception {
+    public List<AchievementModel> getAllAchievementsSortedByDate() {
+        log.info("Fetching all achievements sorted by date");
         try {
-            log.info("Fetching all achievements sorted by date");
             return repository.findAll().stream()
                     .sorted(Comparator.comparing(AchievementModel::getDate))
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Error fetching achievements: {}", e.getMessage());
-            throw new Exception("Unable to fetch achievements", e);
+            throw new RuntimeException("Unable to fetch achievements", e);
         }
     }
 
     @CachePut(value = "achievements", key = "#model.id")
-    public AchievementModel addtoAchievement(AchievementModel model) throws Exception {
+    public AchievementModel addtoAchievement(AchievementModel model) {
+        log.info("Attempting to add achievement: {}", model);
         try {
-            log.info("Attempting to add achievement: {}", model);
-
-            new Thread(() -> {
-
-                try {
-                    Thread.sleep(2000); 
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                log.info("Added achievement: {}", model);
-            }).start();
-            return repository.save(model);
+            AchievementModel savedAchievement = repository.save(model);
+            log.info("Added achievement: {}", savedAchievement);
+            return savedAchievement;
         } catch (Exception e) {
             log.error("Error adding achievement: {}", e.getMessage());
-            throw new Exception("Unable to add achievement", e);
+            throw new RuntimeException("Unable to add achievement", e);
         }
     }
 
     @CachePut(value = "achievements", key = "#id")
-    public Optional<AchievementModel> updateAchievement(Long id, AchievementModel model) throws Exception {
+    public Optional<AchievementModel> updateAchievement(Long id, AchievementModel model) {
+        log.info("Updating achievement with ID: {}", id);
         try {
             return repository.findById(id).map(existingAchievement -> {
                 existingAchievement.setDate(model.getDate());
                 existingAchievement.setCollege(model.getCollege());
                 existingAchievement.setEvent(model.getEvent());
                 existingAchievement.setPosition(model.getPosition());
-                log.info("Updating achievement with ID: {}", id);
-                return repository.save(existingAchievement);
+                AchievementModel updatedAchievement = repository.save(existingAchievement);
+                log.info("Updated achievement: {}", updatedAchievement);
+                return updatedAchievement;
             }).or(() -> {
                 log.warn("Achievement with ID {} not found", id);
                 throw new RuntimeException("Achievement not found");
             });
         } catch (Exception e) {
             log.error("Error updating achievement: {}", e.getMessage());
-            throw new Exception("Unable to update achievement", e);
+            throw new RuntimeException("Unable to update achievement", e);
         }
     }
 
     @CacheEvict(value = "achievements", key = "#id")
-    public boolean deleteAchievement(Long id) throws Exception {
+    public boolean deleteAchievement(Long id) {
+        log.info("Deleting achievement with ID: {}", id);
         try {
             if (repository.existsById(id)) {
                 repository.deleteById(id);
                 log.info("Deleted achievement with ID: {}", id);
                 return true;
             } else {
-                log.warn("Attempted to delete non-existing achievement with ID: {}", id);
-                throw new RuntimeException("Achievement not found");
+                log.warn("Achievement with ID {} not found for deletion", id);
+                return false;
             }
         } catch (EmptyResultDataAccessException e) {
             log.error("Error deleting achievement: {}", e.getMessage());
-            throw new Exception("Unable to delete achievement", e);
+            throw new RuntimeException("Unable to delete achievement", e);
         }
+    }
+
+    @Cacheable(value = "achievement", key = "#id")
+    public Optional<AchievementModel> getAchievement(Long id) {
+        log.info("Fetching achievement with ID: {}", id);
+        return repository.findById(id);
     }
 }
