@@ -46,7 +46,7 @@ public class TeamService {
         }
     }
 
-    @CachePut(value = "TeamCache", key = "#result.id")
+    @CacheEvict(value = "TeamCache",allEntries = true )
     public TeamModel addTeamMember(TeamModel teamMember) {
         log.info("Adding new team member: {}", teamMember);
         try {
