@@ -1,10 +1,10 @@
 package trex.com.Web.Sales.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -17,7 +17,7 @@ import lombok.*;
 @Setter
 public class ItemModel {
 
-    public ItemModel(String name, String description, String specification, String price, String img) {
+    public ItemModel(String name, String description, String specification, String price, List<String> img) {
         this.name = name;
         this.description = description;
         this.specification = specification;
@@ -32,6 +32,8 @@ public class ItemModel {
     private String description;
     private String specification;
     private String price;
-    private String img;
+    @ElementCollection
+    private List<String> img ;
+
 
 }

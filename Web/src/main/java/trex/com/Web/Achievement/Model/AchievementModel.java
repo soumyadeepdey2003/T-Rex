@@ -33,12 +33,12 @@ public class AchievementModel {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    @NotNull(message = "Collage name is requare")
+    @NotNull(message = "Collage name is required")
     private String college;
 
     private String event;
 
-    @NotNull(message = "position is requare")
+    @NotNull(message = "position is required")
     private String position;
 
 
