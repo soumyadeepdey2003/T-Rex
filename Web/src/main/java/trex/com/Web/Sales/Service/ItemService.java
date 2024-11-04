@@ -6,9 +6,12 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import trex.com.Web.Sales.Model.ItemModel;
+import trex.com.Web.Config.CloudinaryService;
 import trex.com.Web.Sales.Repository.ItemRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +21,10 @@ public class ItemService {
 
     @Autowired
     private ItemRepository repository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
 
     @Cacheable(value = "ItemCache")
     public List<ItemModel> getAllItems() throws Exception {
@@ -43,6 +50,9 @@ public class ItemService {
 
     @CacheEvict(value = "ItemCache", allEntries = true)
     public ItemModel addItem(ItemModel item) throws Exception {
+        if (item.getId() != null) {
+            throw new RuntimeException("Item ID must be null");
+        }
         log.info("Adding new item: {}", item);
         try {
             ItemModel savedItem = repository.save(item);
